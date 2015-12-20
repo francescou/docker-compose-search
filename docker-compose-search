@@ -1,0 +1,57 @@
+#! /usr/bin/python2
+
+'''
+composeregistry.com CLI
+'''
+
+import re
+import sys
+import logging
+import requests
+from git import Repo
+from termcolor import colored
+
+logging.basicConfig(level=logging.WARN)
+
+PATTERN = re.compile("^[1-8]$")
+
+def loop(query):
+    '''
+    main method, query for user input
+    '''
+
+    logging.info('searching for %s', query)
+
+    response = requests.get('https://www.composeregistry.com/api/v1/search', \
+        params={'query': query}, headers={'x-key': 'default'})
+
+    if response.status_code == 200:
+        data = response.json()
+        logging.debug(data)
+        logging.info(data['items'])
+        for i, item in enumerate(data['items']):
+            print colored(str(i+1), 'yellow') + ' ' + \
+              colored(item['owner'], 'magenta') + ' ' + item['name'] + ' ' + \
+              colored('(' + str(item['stars']) + ')', 'red')
+
+        if len(data['items']) == 0:
+            print 'no results found'
+        else:
+            choice = raw_input("\nselect an item: ")
+            if PATTERN.match(choice):
+                repo = data['items'][int(choice)-1]
+                git_url = 'git@github.com:%s/%s.git' % (repo['owner'], repo['name'])
+                print 'git clone ' + git_url
+                Repo.clone_from(git_url, repo['name'])
+            else:
+                logging.error('invalid choice: %s', choice)
+
+    else:
+        raise RuntimeError('unable to process request: ' + response.status_code)
+
+
+if len(sys.argv) > 1:
+    loop(' '.join(sys.argv[1:]))
+else:
+    logging.error('usage: compose-cli QUERY')
+
