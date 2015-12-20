@@ -64,7 +64,7 @@ setup(
     keywords='docker compose search',
 
 
-    install_requires=['peppercorn'],
+    install_requires=['requests', 'gitpython', 'termcolor'],
 
     scripts=['docker-compose-search']
 )
