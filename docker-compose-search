@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.WARN)
 
 PATTERN = re.compile("^[1-8]$")
 
-def loop(query):
+def search(query):
     '''
     main method, query for user input
     '''
@@ -51,7 +51,7 @@ def loop(query):
 
 
 if len(sys.argv) > 1:
-    loop(' '.join(sys.argv[1:]))
+    search(' '.join(sys.argv[1:]))
 else:
     logging.error('usage: compose-cli QUERY')
 
