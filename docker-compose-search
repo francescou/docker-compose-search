@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 '''
 composeregistry.com CLI
@@ -53,5 +53,5 @@ def search(query):
 if len(sys.argv) > 1:
     search(' '.join(sys.argv[1:]))
 else:
-    logging.error('usage: compose-cli QUERY')
+    logging.error('usage: %s QUERY' % sys.argv[0])
 
