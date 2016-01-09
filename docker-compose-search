@@ -17,7 +17,7 @@ PATTERN = re.compile("^[1-8]$")
 
 def search(query):
     '''
-    main method, query for user input
+    search for docker compose files on www.composeregistry.com
     '''
 
     logging.info('searching for %s', query)
@@ -47,11 +47,19 @@ def search(query):
                 logging.error('invalid choice: %s', choice)
 
     else:
-        raise RuntimeError('unable to process request: ' + response.status_code)
+        message = response.json()['error']
+        raise RuntimeError('unable to process request: ' + message \
+            + ', status code = ' + str(response.status_code))
 
+def main():
+    """
+    main method, validates user input and query www.composeregistry.com/
+    """
+    if len(sys.argv) > 1:
+        querystring = ' '.join(sys.argv[1:])
+        search(querystring)
+    else:
+        logging.error('usage: %s QUERY', sys.argv[0])
 
-if len(sys.argv) > 1:
-    search(' '.join(sys.argv[1:]))
-else:
-    logging.error('usage: %s QUERY' % sys.argv[0])
-
+if __name__ == '__main__':
+    main()
